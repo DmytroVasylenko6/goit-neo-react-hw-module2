@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Feedback from './Feedback'
 import Section from './Section'
 import Options from './Options'
@@ -12,12 +12,23 @@ interface FeedbackState {
 
 type FeedbackType = keyof FeedbackState
 
+const getInitialState = () => {
+  const savedState = localStorage.getItem('feedbackState')
+  return savedState
+    ? JSON.parse(savedState)
+    : {
+        good: 0,
+        neutral: 0,
+        bad: 0
+      }
+}
+
 export default function FeedBack() {
-  const [state, setState] = useState<FeedbackState>({
-    good: 0,
-    neutral: 0,
-    bad: 0
-  })
+  const [state, setState] = useState<FeedbackState>(getInitialState)
+
+  useEffect(() => {
+    localStorage.setItem('feedbackState', JSON.stringify(state))
+  }, [state])
 
   const totalFeedback = state.good + state.neutral + state.bad
 
